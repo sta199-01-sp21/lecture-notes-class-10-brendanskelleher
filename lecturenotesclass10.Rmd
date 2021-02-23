@@ -49,17 +49,22 @@ xtabs(~ Treatment + Improved, data = Arthritis) %>%
 ```
 
 - How many patients were enrolled in the clinical trial?
+  My Answer: 84 patients
 
 - What is the probability a randomly selected patient received the placebo?
+  My Answer: 43/84 = 51.2%
 
 - What is the probability a randomly selected patient received the placebo
   and had a marked improvement?
+  My Answer: 7/84 = 8.3%
   
 - What is the probability a randomly selected patient received the placebo
   and the treatment?
+  My Answer: 0/84 = 0%
   
 - What is the probability a randomly selected patient had some improvement or
   was on the treatment?
+  My Answer: (14+41-7)/84 = 57.1%
 
 ## Using computer simulations to calculate probabilities
 
@@ -92,7 +97,7 @@ of eight marbles each time. This way we can easily simulate our marble-drawing
 experiment.
 
 ```{r simulate_draws}
-draw_results <- sample(marbles, size = 10000, replace = TRUE)
+draw_results <- sample(marbles, size = 100000, replace = TRUE)
 ```
 
 ```{r summarize_draws}
@@ -101,6 +106,8 @@ prop.table(counts)
 ```
 
 How close is this value to the "true" probability?
+My Answer: Very close. The true probabilities are 37.5% (blue), 50% (red),
+and 12.5% (white).
 
 **To summarize our process:**
 
@@ -117,6 +124,7 @@ color if we make two draws with replacement? We haven't discussed how to
 compute this theoretically yet, but this is what computers are good at.
 
 Before we do this, what is your guess as to what the probability will be?
+My Answer: the probability will be somewhere around 40%?
 
 We'll still use `sample()` to run our simulation many times, but we'll
 use `dplyr` functions to compute the relative frequencies.
@@ -156,18 +164,31 @@ difference between dice roll 1 and dice roll 2 is equal to 4.
 Perform a simulation to compute this empirical probability.
 
 Write down your guess to the answer before you calculate it.
+My Guess: Square match will be more prevalent
 
 ```{r simulate_rolls}
-
+dice <- c(1, 2, 3, 4, 5, 6)
+two_roll_results <- tibble(
+  roll_1 = sample(dice, size = 10000, replace = TRUE),
+  roll_2 = sample(dice, size = 10000, replace = TRUE)
+)
+two_roll_results
 ```
 
 ```{r identify_events}
-
+two_roll_results <- two_roll_results %>% 
+  mutate(square_match = (roll_1 * roll_1) == (roll_2 * roll_2),
+         abs_match = 4 == abs(roll_2 - roll_1))
+two_roll_results
 ```
 
 ```{r summarize_rolls}
-
+two_roll_results %>% 
+  summarize(prop_square = sum(square_match) / n(),
+            prop_abs = sum(abs_match) / n())
 ```
+
+Conclusion: Square match was more prevalent by about 5%!
 
 ## Additional Resources-please look at before Weds.
 
